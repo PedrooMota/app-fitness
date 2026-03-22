@@ -51,12 +51,12 @@ export const TeamScreen: React.FC = () => {
 
   const handleRemove = (member: User) => {
     Alert.alert(
-      'Remover aluno',
-      `Deseja remover ${member.name} do seu time?`,
+      'Excluir aluno',
+      `Tem certeza que deseja excluir ${member.name}?\n\nEsta ação irá remover permanentemente:\n• Conta do aluno\n• Todos os treinos prescritos\n• Todos os planos de dieta\n• Todo o histórico de treinos\n\nEssa ação não pode ser desfeita.`,
       [
         { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'Remover',
+          text: 'Excluir tudo',
           style: 'destructive',
           onPress: async () => {
             try {
