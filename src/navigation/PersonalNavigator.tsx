@@ -15,6 +15,7 @@ import { CreateWorkoutScreen } from '../screens/personal/CreateWorkoutScreen';
 import { PersonalWorkoutDetailScreen } from '../screens/personal/WorkoutDetailScreen';
 import { CreateDietScreen } from '../screens/personal/CreateDietScreen';
 import { PersonalDietDetailScreen } from '../screens/personal/DietDetailScreen';
+import { UpgradePlanScreen } from '../screens/personal/UpgradePlanScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<PersonalStackParams>();
@@ -73,6 +74,7 @@ export const PersonalNavigator: React.FC = () => (
   >
     <Stack.Screen name="Tabs" component={PersonalTabs} options={{ headerShown: false }} />
     <Stack.Screen name="InviteUser" component={InviteUserScreen} options={{ title: 'Convidar aluno' }} />
+    <Stack.Screen name="UpgradePlan" component={UpgradePlanScreen} options={{ title: 'Plano Pro' }} />
     <Stack.Screen
       name="ClientDetail"
       component={ClientDetailScreen}

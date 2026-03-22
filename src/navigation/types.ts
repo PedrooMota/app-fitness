@@ -8,6 +8,7 @@ export type AuthStackParams = {
 export type PersonalStackParams = {
   Tabs: undefined;
   InviteUser: undefined;
+  UpgradePlan: undefined;
   ClientDetail: { clientId: string; clientName: string };
   CreateWorkout: { clientId: string; clientName: string };
   WorkoutDetail: { workoutId: string; clientId: string; clientName: string };

@@ -24,6 +24,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  plan: string;           // 'free' | 'pro' — controla acesso a funcionalidades pagas
   personalId?: string;
   weight?: number;
   height?: number;

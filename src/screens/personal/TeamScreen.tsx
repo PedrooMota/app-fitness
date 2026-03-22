@@ -16,13 +16,23 @@ import { Card } from '../../components/Card';
 import { colors } from '../../theme';
 import * as teamsApi from '../../api/teams';
 import { User } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
 
 type Nav = NativeStackNavigationProp<PersonalStackParams>;
 
 export const TeamScreen: React.FC = () => {
   const navigation = useNavigation<Nav>();
+  const { user } = useAuth();
   const [members, setMembers] = useState<User[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+
+  const handleInvitePress = () => {
+    if (user?.plan === 'free') {
+      navigation.navigate('UpgradePlan');
+    } else {
+      navigation.navigate('InviteUser');
+    }
+  };
 
   const load = useCallback(async () => {
     try {
@@ -106,7 +116,7 @@ export const TeamScreen: React.FC = () => {
 
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate('InviteUser')}
+        onPress={handleInvitePress}
         activeOpacity={0.8}
       >
         <Ionicons name="person-add" size={24} color="#fff" />
