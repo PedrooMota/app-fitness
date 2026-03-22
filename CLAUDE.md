@@ -13,6 +13,20 @@ Dois perfis de acesso:
 
 ---
 
+## Repositório
+
+GitHub: `https://github.com/PedrooMota/app-fitness`
+
+**Regra:** a cada feature, correção ou atualização relevante, fazer commit e push imediatamente para manter o repositório sempre atualizado.
+
+```bash
+git add -A
+git commit -m "tipo: descrição resumida"
+git push
+```
+
+---
+
 ## Stack
 
 | Tecnologia | Versão | Uso |
