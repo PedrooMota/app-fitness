@@ -15,6 +15,8 @@ import { colors, shadows } from '../theme';
 
 interface Props {
   videoUrl: string;
+  /** Se true, inicia o player diretamente sem mostrar thumbnail */
+  autoPlay?: boolean;
 }
 
 /** Extrai o ID de uma URL do YouTube */
@@ -32,8 +34,36 @@ function extractYouTubeId(url: string): string | null {
   return null;
 }
 
-export const VideoThumb: React.FC<Props> = ({ videoUrl }) => {
-  const [playing, setPlaying] = useState(false);
+/**
+ * Gera um HTML local com o iframe do YouTube.
+ * Usar source={{ html }} em vez de source={{ uri }} evita o erro 153
+ * ("Video player configuration error"), que ocorre quando o YouTube bloqueia
+ * embeds sem Referer — ao injetar HTML local a restrição não se aplica.
+ */
+function buildEmbedHtml(videoId: string): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+    iframe { width: 100%; height: 100%; border: none; display: block; }
+  </style>
+</head>
+<body>
+  <iframe
+    src="https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1"
+    allow="autoplay; fullscreen; accelerometer; gyroscope; encrypted-media; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+</body>
+</html>`;
+}
+
+export const VideoThumb: React.FC<Props> = ({ videoUrl, autoPlay = false }) => {
+  const [playing, setPlaying] = useState(autoPlay);
   const [webviewLoading, setWebviewLoading] = useState(true);
 
   const videoId = extractYouTubeId(videoUrl);
@@ -58,7 +88,6 @@ export const VideoThumb: React.FC<Props> = ({ videoUrl }) => {
   }
 
   const thumbUri = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
 
   return (
     <View style={styles.wrapper}>
@@ -76,7 +105,7 @@ export const VideoThumb: React.FC<Props> = ({ videoUrl }) => {
           </View>
         </TouchableOpacity>
       ) : (
-        /* ── Player inline ── */
+        /* ── Player ── */
         <View style={styles.playerContainer}>
           {webviewLoading && (
             <View style={styles.loadingOverlay}>
@@ -84,28 +113,26 @@ export const VideoThumb: React.FC<Props> = ({ videoUrl }) => {
             </View>
           )}
           <WebView
-            source={{ uri: embedUrl }}
+            source={{ html: buildEmbedHtml(videoId) }}
             style={styles.webview}
             allowsFullscreenVideo
             mediaPlaybackRequiresUserAction={false}
             onLoadEnd={() => setWebviewLoading(false)}
             javaScriptEnabled
             domStorageEnabled
+            allowsInlineMediaPlayback
+            originWhitelist={['*']}
           />
-          <TouchableOpacity style={styles.closeBtn} onPress={() => { setPlaying(false); setWebviewLoading(true); }}>
-            <Ionicons name="close" size={16} color={colors.white} />
-          </TouchableOpacity>
         </View>
       )}
     </View>
   );
 };
 
-const PLAYER_HEIGHT = 200;
+const PLAYER_HEIGHT = 210;
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginTop: 12,
     borderRadius: 12,
     overflow: 'hidden',
     ...shadows.sm,
@@ -173,25 +200,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 1,
   },
-  closeBtn: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-  },
 
   /* Fallback */
   fallbackBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginTop: 12,
     paddingVertical: 8,
     paddingHorizontal: 12,
     backgroundColor: colors.primaryLight,

@@ -135,7 +135,7 @@ export const PersonalWorkoutDetailScreen: React.FC<Props> = ({ route, navigation
                 <Ionicons name="close" size={20} color={colors.text} />
               </TouchableOpacity>
             </View>
-            {videoModal && <VideoThumb videoUrl={videoModal.url} />}
+            {videoModal && <VideoThumb videoUrl={videoModal.url} autoPlay />}
           </SafeAreaView>
         </View>
       </Modal>
@@ -197,15 +197,15 @@ const styles = StyleSheet.create({
   videoBtnText: { fontSize: 12, color: colors.primary, fontWeight: '600' },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    justifyContent: 'center',
+    padding: 20,
   },
   modalSheet: {
     backgroundColor: colors.card,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderRadius: 20,
     padding: 16,
-    paddingBottom: 24,
+    paddingBottom: 20,
   },
   modalHeader: {
     flexDirection: 'row',
