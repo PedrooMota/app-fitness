@@ -6,7 +6,6 @@ import {
   ScrollView,
   Modal,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -114,15 +113,15 @@ export const UserWorkoutDetailScreen: React.FC<Props> = ({ route, navigation }) 
         onRequestClose={() => setVideoModal(null)}
       >
         <View style={styles.modalBackdrop}>
-          <SafeAreaView style={styles.modalSheet}>
+          <View style={styles.modalSheet}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle} numberOfLines={1}>{videoModal?.name}</Text>
+              <Text style={styles.modalTitle} numberOfLines={2}>{videoModal?.name}</Text>
               <TouchableOpacity onPress={() => setVideoModal(null)} style={styles.modalClose}>
                 <Ionicons name="close" size={20} color={colors.text} />
               </TouchableOpacity>
             </View>
             {videoModal && <VideoThumb videoUrl={videoModal.url} autoPlay />}
-          </SafeAreaView>
+          </View>
         </View>
       </Modal>
     </>
@@ -184,18 +183,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.75)',
     justifyContent: 'center',
-    padding: 20,
+    paddingHorizontal: 20,
   },
   modalSheet: {
     backgroundColor: colors.card,
     borderRadius: 20,
-    padding: 16,
-    paddingBottom: 20,
+    overflow: 'hidden',
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    gap: 8,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 14,
   },
   modalTitle: {
     flex: 1,
@@ -210,5 +211,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
 });

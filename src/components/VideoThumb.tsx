@@ -123,6 +123,14 @@ export const VideoThumb: React.FC<Props> = ({ videoUrl, autoPlay = false }) => {
             allowsInlineMediaPlayback
             originWhitelist={['*']}
           />
+          {/* Fallback para Expo Go onde o WebView pode bloquear o YouTube */}
+          <TouchableOpacity
+            style={styles.openYoutubeBtn}
+            onPress={() => Linking.openURL(videoUrl)}
+          >
+            <Ionicons name="logo-youtube" size={14} color="#FF0000" />
+            <Text style={styles.openYoutubeText}>Abrir no YouTube</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
@@ -199,6 +207,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
+  },
+
+  openYoutubeBtn: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  openYoutubeText: {
+    fontSize: 11,
+    color: colors.white,
+    fontWeight: '600',
   },
 
   /* Fallback */
