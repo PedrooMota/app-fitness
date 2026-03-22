@@ -16,6 +16,7 @@ import { colors } from '../../theme';
 import * as workoutsApi from '../../api/workouts';
 import * as dietApi from '../../api/diet';
 import { Workout, DietPlan } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
 
 type Props = NativeStackScreenProps<PersonalStackParams, 'ClientDetail'>;
 type Nav = NativeStackNavigationProp<PersonalStackParams>;
@@ -23,9 +24,18 @@ type Nav = NativeStackNavigationProp<PersonalStackParams>;
 export const ClientDetailScreen: React.FC<Props> = ({ route }) => {
   const { clientId, clientName } = route.params;
   const navigation = useNavigation<Nav>();
+  const { user } = useAuth();
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [diets, setDiets] = useState<DietPlan[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+
+  const requirePlan = (action: () => void) => {
+    if (user?.plan === 'free') {
+      navigation.navigate('UpgradePlan');
+    } else {
+      action();
+    }
+  };
 
   const load = useCallback(async () => {
     try {
@@ -64,7 +74,7 @@ export const ClientDetailScreen: React.FC<Props> = ({ route }) => {
         <Text style={styles.sectionTitle}>Treinos ({workouts.length})</Text>
         <TouchableOpacity
           style={styles.addBtn}
-          onPress={() => navigation.navigate('CreateWorkout', { clientId, clientName })}
+          onPress={() => requirePlan(() => navigation.navigate('CreateWorkout', { clientId, clientName }))}
         >
           <Ionicons name="add" size={18} color={colors.primary} />
           <Text style={styles.addBtnText}>Novo</Text>
@@ -97,7 +107,7 @@ export const ClientDetailScreen: React.FC<Props> = ({ route }) => {
         <Text style={styles.sectionTitle}>Planos de dieta ({diets.length})</Text>
         <TouchableOpacity
           style={styles.addBtn}
-          onPress={() => navigation.navigate('CreateDiet', { clientId, clientName })}
+          onPress={() => requirePlan(() => navigation.navigate('CreateDiet', { clientId, clientName }))}
         >
           <Ionicons name="add" size={18} color={colors.success} />
           <Text style={[styles.addBtnText, { color: colors.success }]}>Novo</Text>
