@@ -121,7 +121,7 @@ export const ClientDetailScreen: React.FC<Props> = ({ route }) => {
           <Card key={d.id}>
             <TouchableOpacity onPress={() => navigation.navigate('DietDetail', { dietId: d.id, clientId, clientName })} activeOpacity={0.7}>
               <View style={styles.itemRow}>
-                <View style={[styles.itemIcon, { backgroundColor: '#F0FDF4' }]}>
+                <View style={[styles.itemIcon, { backgroundColor: colors.successLight }]}>
                   <Ionicons name="restaurant" size={20} color={colors.success} />
                 </View>
                 <View style={styles.itemInfo}>

@@ -161,5 +161,5 @@ const styles = StyleSheet.create({
   setNum: { textAlign: 'center', fontSize: 14, color: colors.muted, fontWeight: '600' },
   setInput: { textAlign: 'center', height: 40, fontSize: 14 },
   checkBtn: { alignItems: 'center', justifyContent: 'center', height: 40 },
-  checkBtnDone: {},
+  checkBtnDone: { backgroundColor: colors.successLight, borderRadius: 8 },
 });

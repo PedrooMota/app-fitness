@@ -5,11 +5,13 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PersonalStackParams } from '../../navigation/types';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
+import { MacroChip } from '../../components/MacroChip';
 import { colors } from '../../theme';
 import * as dietApi from '../../api/diet';
 import { DietPlan } from '../../types';
@@ -42,7 +44,11 @@ export const PersonalDietDetailScreen: React.FC<Props> = ({ route, navigation })
     ]);
   };
 
-  if (!plan) return null;
+  if (!plan) return (
+    <View style={{ flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator size="large" color={colors.primary} />
+    </View>
+  );
 
   const totalCalories = plan.meals.reduce(
     (acc, meal) => acc + meal.foods.reduce((a, f) => a + (f.calories || 0), 0),
@@ -91,16 +97,6 @@ export const PersonalDietDetailScreen: React.FC<Props> = ({ route, navigation })
   );
 };
 
-const MacroChip: React.FC<{ label: string; value: number; color: string }> = ({ label, value, color }) => (
-  <View style={[macroStyles.chip, { backgroundColor: `${color}18` }]}>
-    <Text style={[macroStyles.text, { color }]}>{label}: {value}g</Text>
-  </View>
-);
-
-const macroStyles = StyleSheet.create({
-  chip: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  text: { fontSize: 11, fontWeight: '600' },
-});
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },

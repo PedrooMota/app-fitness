@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { UserStackParams } from '../../navigation/types';
 import { Card } from '../../components/Card';
+import { MacroChip } from '../../components/MacroChip';
 import { colors } from '../../theme';
 import * as dietApi from '../../api/diet';
 import { DietPlan } from '../../types';
@@ -17,7 +18,11 @@ export const UserDietDetailScreen: React.FC<Props> = ({ route }) => {
     dietApi.getDietPlan(dietId).then(setPlan).catch(() => {});
   }, [dietId]);
 
-  if (!plan) return null;
+  if (!plan) return (
+    <View style={{ flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator size="large" color={colors.success} />
+    </View>
+  );
 
   const totalCalories = plan.meals.reduce((acc, meal) => acc + meal.foods.reduce((a, f) => a + (f.calories || 0), 0), 0);
   const totalProtein = plan.meals.reduce((acc, meal) => acc + meal.foods.reduce((a, f) => a + (f.protein || 0), 0), 0);
@@ -55,9 +60,10 @@ export const UserDietDetailScreen: React.FC<Props> = ({ route }) => {
                 <Text style={styles.foodQty}>{food.quantity}</Text>
               </View>
               <View style={styles.macros}>
-                {food.calories ? <Text style={[styles.macroText, { color: colors.warning }]}>{food.calories}kcal</Text> : null}
-                {food.protein ? <Text style={[styles.macroText, { color: colors.primary }]}>P:{food.protein}g</Text> : null}
-                {food.carbs ? <Text style={[styles.macroText, { color: colors.success }]}>C:{food.carbs}g</Text> : null}
+                {food.calories ? <MacroChip label="kcal" value={food.calories} color={colors.warning} /> : null}
+                {food.protein ? <MacroChip label="P" value={food.protein} color={colors.primary} /> : null}
+                {food.carbs ? <MacroChip label="C" value={food.carbs} color={colors.success} /> : null}
+                {food.fat ? <MacroChip label="G" value={food.fat} color={colors.secondary} /> : null}
               </View>
             </View>
           ))}
@@ -77,7 +83,7 @@ const MacroBox: React.FC<{ label: string; value: string; unit: string; color: st
 const macroStyles = StyleSheet.create({
   box: { flex: 1, borderWidth: 1.5, borderRadius: 8, padding: 8, alignItems: 'center' },
   value: { fontSize: 14, fontWeight: '700' },
-  label: { fontSize: 10, color: colors.muted, marginTop: 2 },
+  label: { fontSize: 12, color: colors.muted, marginTop: 2 },
 });
 
 const styles = StyleSheet.create({
@@ -95,5 +101,4 @@ const styles = StyleSheet.create({
   foodName: { fontSize: 14, fontWeight: '500', color: colors.text },
   foodQty: { fontSize: 13, color: colors.muted },
   macros: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
-  macroText: { fontSize: 12, fontWeight: '600' },
 });

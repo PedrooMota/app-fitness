@@ -71,7 +71,7 @@ export const PersonalDashboardScreen: React.FC = () => {
       {/* Stats */}
       <View style={styles.statsRow}>
         <StatCard icon="people" label="Alunos" value={members.length} color={colors.primary} bg={colors.primaryLight} />
-        <StatCard icon="barbell" label="Treinos" value={workouts.length} color={colors.secondary} bg="#FFF0F3" />
+        <StatCard icon="barbell" label="Treinos" value={workouts.length} color={colors.secondary} bg={colors.secondaryLight} />
         <StatCard icon="restaurant" label="Dietas" value={diets.length} color={colors.success} bg={colors.successLight} />
       </View>
 
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   statValue: { fontSize: 22, fontWeight: '800', color: colors.text },
-  statLabel: { fontSize: 11, color: colors.muted, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.3 },
+  statLabel: { fontSize: 12, color: colors.muted, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.3 },
 
   sectionHeader: {
     flexDirection: 'row',
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: 22,
     backgroundColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',

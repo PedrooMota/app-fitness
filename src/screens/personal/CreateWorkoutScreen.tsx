@@ -108,7 +108,7 @@ export const CreateWorkoutScreen: React.FC<Props> = ({ route, navigation }) => {
           <Card key={idx}>
             <View style={styles.exHeader}>
               <Text style={styles.exName}>{ex.exerciseName}</Text>
-              <TouchableOpacity onPress={() => removeExercise(idx)}>
+              <TouchableOpacity onPress={() => removeExercise(idx)} style={{ padding: 11 }}>
                 <Ionicons name="trash-outline" size={18} color={colors.danger} />
               </TouchableOpacity>
             </View>

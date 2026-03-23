@@ -3,12 +3,14 @@ export const colors = {
   primaryLight: '#EEF0FF',
   primaryDark: '#5A52D5',
   secondary: '#FF6584',
+  secondaryLight: '#FFF0F3',
   success: '#22C55E',
   successLight: '#F0FDF4',
   danger: '#EF4444',
   dangerLight: '#FEF2F2',
   warning: '#F59E0B',
   warningLight: '#FFFBEB',
+  warningBorder: '#FDE68A',
   background: '#F5F5F7',
   card: '#FFFFFF',
   inputBg: '#F3F4F6',
@@ -20,6 +22,8 @@ export const colors = {
   white: '#FFFFFF',
   personal: '#6C63FF',
   user: '#22C55E',
+  pro: '#7C3AED',
+  proLight: '#F5F3FF',
 };
 
 export const shadows = {

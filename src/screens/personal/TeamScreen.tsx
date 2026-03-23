@@ -119,7 +119,7 @@ export const TeamScreen: React.FC = () => {
         onPress={handleInvitePress}
         activeOpacity={0.8}
       >
-        <Ionicons name="person-add" size={24} color="#fff" />
+        <Ionicons name="person-add" size={24} color={colors.white} />
       </TouchableOpacity>
     </View>
   );
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   email: { fontSize: 13, color: colors.muted, marginBottom: 6 },
   chips: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
   actions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  removeBtn: { padding: 4 },
+  removeBtn: { padding: 11 },
   empty: { color: colors.muted, textAlign: 'center', paddingVertical: 8 },
   fab: {
     position: 'absolute',

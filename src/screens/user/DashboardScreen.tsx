@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   statValue: { fontSize: 22, fontWeight: '800', color: colors.text },
-  statLabel: { fontSize: 11, color: colors.muted, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.3 },
+  statLabel: { fontSize: 12, color: colors.muted, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.3 },
 
   sectionHeader: {
     flexDirection: 'row',

@@ -50,14 +50,14 @@ export const Button: React.FC<Props> = ({
       disabled={isDisabled}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'outline' || variant === 'ghost' ? colors.primary : '#fff'} />
+        <ActivityIndicator color={variant === 'outline' || variant === 'ghost' ? colors.primary : colors.white} />
       ) : (
         <View style={styles.inner}>
           {icon && (
             <Ionicons
               name={icon}
               size={size === 'sm' ? 16 : 18}
-              color={variant === 'outline' || variant === 'ghost' ? colors.primary : '#fff'}
+              color={variant === 'outline' || variant === 'ghost' ? colors.primary : colors.white}
               style={{ marginRight: 6 }}
             />
           )}
@@ -87,10 +87,10 @@ const styles = StyleSheet.create({
   ghost: { backgroundColor: 'transparent' },
   disabled: { opacity: 0.45 },
   text: { fontSize: 15, fontWeight: '700', letterSpacing: 0.2 },
-  primaryText: { color: '#fff' },
-  successText: { color: '#fff' },
+  primaryText: { color: colors.white },
+  successText: { color: colors.white },
   outlineText: { color: colors.primary },
-  dangerText: { color: '#fff' },
+  dangerText: { color: colors.white },
   ghostText: { color: colors.primary },
 });
 

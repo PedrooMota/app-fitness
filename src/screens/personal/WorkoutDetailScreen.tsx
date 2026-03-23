@@ -7,6 +7,7 @@ import {
   Alert,
   Modal,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -60,7 +61,11 @@ export const PersonalWorkoutDetailScreen: React.FC<Props> = ({ route, navigation
     ]);
   };
 
-  if (!workout) return null;
+  if (!workout) return (
+    <View style={{ flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator size="large" color={colors.primary} />
+    </View>
+  );
 
   return (
     <>
@@ -168,7 +173,7 @@ const styles = StyleSheet.create({
   clientLabel: { fontSize: 13, color: colors.muted, marginBottom: 4 },
   workoutName: { fontSize: 20, fontWeight: '700', color: colors.text },
   description: { fontSize: 14, color: colors.textSecondary, marginTop: 6 },
-  sectionTitle: { fontSize: 15, fontWeight: '700', color: colors.text, marginBottom: 10 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: colors.text, marginBottom: 10 },
   exRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 10 },
   exNumber: {
     width: 28,
@@ -178,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  exNumberText: { fontSize: 13, fontWeight: '700', color: '#fff' },
+  exNumberText: { fontSize: 13, fontWeight: '700', color: colors.white },
   exInfo: { flex: 1 },
   exName: { fontSize: 15, fontWeight: '600', color: colors.text },
   exGroup: { fontSize: 12, color: colors.muted, textTransform: 'capitalize' },

@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   list: { padding: 16, paddingBottom: 40 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  icon: { width: 44, height: 44, borderRadius: 12, backgroundColor: '#F0FDF4', alignItems: 'center', justifyContent: 'center' },
+  icon: { width: 44, height: 44, borderRadius: 12, backgroundColor: colors.successLight, alignItems: 'center', justifyContent: 'center' },
   info: { flex: 1 },
   name: { fontSize: 16, fontWeight: '600', color: colors.text },
   desc: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
