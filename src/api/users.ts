@@ -5,6 +5,8 @@ export const getMe = () => api.get<User>('/users/me').then((r) => r.data);
 
 export const updateMe = (data: {
   name?: string;
+  email?: string;
+  phone?: string;
   weight?: number;
   height?: number;
   gender?: Gender;

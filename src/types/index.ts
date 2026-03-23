@@ -30,6 +30,7 @@ export interface User {
   height?: number;
   gender?: Gender;
   age?: number;
+  phone?: string;
   createdAt: string;
   updatedAt: string;
 }
