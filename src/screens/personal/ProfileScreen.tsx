@@ -18,6 +18,7 @@ import * as usersApi from '../../api/users';
 export const PersonalProfileScreen: React.FC = () => {
   const { user, refreshUser, signOut } = useAuth();
   const [name, setName] = useState(user?.name ?? '');
+  const [email, setEmail] = useState(user?.email ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
   const [loading, setLoading] = useState(false);
 
@@ -34,6 +35,7 @@ export const PersonalProfileScreen: React.FC = () => {
     try {
       await usersApi.updateMe({
         name: name.trim(),
+        email: email.trim() || undefined,
         phone: phone.trim() || undefined,
       });
       await refreshUser();
@@ -70,10 +72,14 @@ export const PersonalProfileScreen: React.FC = () => {
             onChangeText={setName}
             autoCapitalize="words"
           />
-          <View style={styles.readonlyField}>
-            <Text style={styles.readonlyLabel}>E-mail</Text>
-            <Text style={styles.readonlyValue}>{user?.email}</Text>
-          </View>
+          <Input
+            label="E-mail"
+            placeholder="seu@email.com"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
           <Input
             label="Telefone"
             placeholder="(11) 99999-9999"
@@ -135,20 +141,4 @@ const styles = StyleSheet.create({
   planValue: { fontSize: 15, fontWeight: '600', color: colors.text },
 
   saveBtn: { marginBottom: 12 },
-
-  readonlyField: { marginBottom: 12 },
-  readonlyLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.muted,
-    marginBottom: 4,
-  },
-  readonlyValue: {
-    fontSize: 15,
-    color: colors.muted,
-    backgroundColor: colors.background,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
 });
