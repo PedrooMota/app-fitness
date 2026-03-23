@@ -1,20 +1,20 @@
 # Design: Perfil do Personal Trainer
 
 **Data:** 2026-03-22
-**Status:** Aprovado
+**Status:** Aprovado (revisado)
 
 ---
 
 ## Contexto
 
-O Personal Trainer não possui tela de perfil. O único acesso ao logout está no header do Dashboard. O aluno (`role: user`) já tem uma tab "Perfil" com edição de dados. Esta feature equipara a experiência do personal.
+O Personal Trainer não possui tela de perfil. O único acesso ao logout está no header do Dashboard. O aluno (`role: user`) já tem uma tab "Perfil" com edição de dados. Esta feature equipara a experiência do personal, focando apenas nos dados relevantes para ele.
 
 ---
 
 ## Objetivo
 
 Adicionar uma tab "Perfil" ao `PersonalNavigator` com:
-- Visualização e edição dos dados do personal trainer
+- Visualização e edição de nome, e-mail e telefone
 - Acesso ao logout
 - Ícone personalizado (avatar com iniciais) na bottom tab bar
 
@@ -28,27 +28,45 @@ Adicionar uma tab "Perfil" ao `PersonalNavigator` com:
 | Layout da tela | Estilo lista (iOS settings) | Mais limpo, separa seções claramente |
 | Ícone da tab | Avatar circular com iniciais | Personalizado, identifica o usuário visualmente |
 | Upload de foto | Não implementado | Fora de escopo |
-| Campos editáveis | Nome, peso, altura, idade | Suportados pela API atual |
-| E-mail | Somente leitura | API não suporta alteração de e-mail |
+| Campos editáveis | Nome, e-mail, telefone | Dados relevantes para o personal trainer |
+| Dados físicos (peso, altura, idade) | Não expostos | Irrelevantes para o contexto do personal |
 
 ---
 
 ## Arquitetura
 
-### Novos arquivos
+### Mudanças na API (`app-fitness-api`)
 
-**`src/screens/personal/ProfileScreen.tsx`**
-Tela de perfil do personal trainer. Componente `PersonalProfileScreen`.
+**1. Prisma schema** — adicionar campo `phone` ao modelo `User`:
+```prisma
+model User {
+  // ... campos existentes ...
+  phone String?
+}
+```
 
-### Arquivos modificados
+**2. Migration** — `npx prisma migrate dev --name add_phone_to_user`
 
-**`src/navigation/PersonalNavigator.tsx`**
-- Importa `PersonalProfileScreen`
-- Adiciona tab "Perfil" ao `PersonalTabs`
-- Adiciona ícone customizado `TabAvatarIcon` para essa tab
+**3. `UpdateUserDto`** — adicionar `email` e `phone`:
+```ts
+email?: string;   // IsOptional, IsEmail
+phone?: string;   // IsOptional, IsString
+```
 
-**`src/navigation/types.ts`**
-- Nenhuma alteração necessária (tab não recebe params)
+**4. `users.service.ts`** — garantir que `updateMe` persiste `email` e `phone`
+
+**5. Retorno de `GET /users/me`** — `phone` deve estar presente na resposta. Verificar o `select` ou `findUnique` em `users.service.ts`; se `phone` estiver ausente no objeto retornado, adicioná-lo explicitamente.
+
+### Mudanças no app (`app-fitness`)
+
+**Novos arquivos:**
+- `src/screens/personal/ProfileScreen.tsx` — componente `PersonalProfileScreen`
+
+**Arquivos modificados:**
+- `src/api/users.ts` — adicionar `email` e `phone` ao `updateMe`
+- `src/types/index.ts` — adicionar `phone?: string` ao `User`
+- `src/navigation/PersonalNavigator.tsx` — nova tab + ícone avatar
+- `src/navigation/types.ts` — **sem alteração**: `Perfil` é uma tab (BottomTab), não uma rota Stack; `PersonalStackParams` não precisa ser atualizado
 
 ---
 
@@ -62,19 +80,14 @@ KeyboardAvoidingView
     ┌─ Header compacto ──────────────────────────┐
     │  [Avatar: círculo roxo com iniciais]        │
     │  Nome completo                              │
-    │  email@exemplo.com  (read-only)             │
+    │  email@exemplo.com                          │
     └─────────────────────────────────────────────┘
 
     ┌─ Card "Conta" ─────────────────────────────┐
     │  CONTA                        (label)       │
-    │  Nome          Pedro Mota  ›               │
-    └─────────────────────────────────────────────┘
-
-    ┌─ Card "Dados físicos" ──────────────────────┐
-    │  DADOS FÍSICOS                (label)       │
-    │  Peso (kg)     —           ›               │
-    │  Altura (cm)   —           ›               │
-    │  Idade         —           ›               │
+    │  [Input] Nome                               │
+    │  [Input] E-mail                             │
+    │  [Input] Telefone                           │
     └─────────────────────────────────────────────┘
 
     ┌─ Card "Plano" ──────────────────────────────┐
@@ -83,7 +96,7 @@ KeyboardAvoidingView
     └─────────────────────────────────────────────┘
 
     [Salvar alterações]   ← Button primary
-    [Sair da conta]       ← Button outline/danger
+    [Sair da conta]       ← Button outline
 ```
 
 ### Campos e validação
@@ -91,11 +104,18 @@ KeyboardAvoidingView
 | Campo | Tipo | Editável | Validação |
 |---|---|---|---|
 | Nome | `string` | Sim | Obrigatório, trim |
-| E-mail | `string` | Não | — |
-| Peso | `number` | Sim | Numérico, opcional |
-| Altura | `number` | Sim | Numérico, opcional |
-| Idade | `number` | Sim | Numérico, opcional |
+| E-mail | `string` | Sim | Formato e-mail, obrigatório |
+| Telefone | `string` | Sim | Opcional |
 | Plano | `string` | Não | — |
+
+### Estado local
+
+```ts
+name: string
+email: string
+phone: string
+loading: boolean
+```
 
 ### Comportamento
 
@@ -104,61 +124,30 @@ KeyboardAvoidingView
 - Erros exibidos via `Alert.alert('Erro', e.message)`
 - `signOut`: chama `signOut()` do AuthContext → redireciona para Login
 
-### Estado local
-
-```ts
-name: string
-weight: string
-height: string
-age: string
-loading: boolean
-```
-
 ---
 
 ## Componente: Tab Avatar Icon
 
-Componente inline dentro de `PersonalNavigator.tsx` (não precisa de arquivo separado — é simples o suficiente).
+Componente inline dentro de `PersonalNavigator.tsx`.
 
-```tsx
-// Renderizado apenas para a tab "Perfil"
-// Mostra círculo roxo com a primeira letra do user.name
-// Quando focused: fundo colors.primary, texto branco
-// Quando unfocused: fundo colors.primaryLight, texto colors.primary
-```
-
-O `useAuth()` é chamado dentro do `PersonalTabs` para obter `user.name`.
-
----
-
-## Integração com API
-
-Nenhuma mudança na API é necessária. O endpoint existente `PATCH /api/users/me` já suporta todos os campos editáveis:
-
-```ts
-// src/api/users.ts — já existe
-export const updateMe = (data: {
-  name?: string;
-  weight?: number;
-  height?: number;
-  gender?: Gender;
-  age?: number;
-}) => api.patch<User>('/users/me', data).then((r) => r.data);
-```
+- Lê `user.name` via `useAuth()`
+- Quando focused: círculo `colors.primary` (roxo) com inicial branca
+- Quando unfocused: círculo `colors.primaryLight` com inicial `colors.primary`
+- O `icons` Record existente recebe guard para a rota "Perfil" (que usa avatar, não Ionicons)
 
 ---
 
 ## Mudanças no `PersonalNavigator`
 
-1. Adicionar 3ª tab com `name="Perfil"` e `component={PersonalProfileScreen}`
-2. Ícone: componente customizado que usa `useAuth()` para pegar as iniciais
-3. Remover botão de logout do `DashboardScreen` (o logout agora fica na tab Perfil)
+1. Adicionar 3ª tab `name="Perfil"` com `component={PersonalProfileScreen}`
+2. Ícone customizado com iniciais (inline, usa `useAuth()`)
+3. Remover botão de logout do `DashboardScreen` (único ponto de logout existente) — sem substituto visual, header fica limpo
 
 ---
 
 ## Fora de escopo
 
 - Upload de foto de perfil
-- Alteração de e-mail ou senha
+- Alteração de senha
 - Exclusão de conta
-- Edição de gênero (campo existe na API mas não será exposto nesta versão)
+- Campos físicos (peso, altura, idade, gênero) — irrelevantes para personal trainer
