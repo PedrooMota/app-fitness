@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PersonalStackParams } from './types';
 import { colors, shadows } from '../theme';
+import { useAuth } from '../contexts/AuthContext';
 
 import { PersonalDashboardScreen } from '../screens/personal/DashboardScreen';
 import { TeamScreen } from '../screens/personal/TeamScreen';
@@ -16,26 +17,48 @@ import { PersonalWorkoutDetailScreen } from '../screens/personal/WorkoutDetailSc
 import { CreateDietScreen } from '../screens/personal/CreateDietScreen';
 import { PersonalDietDetailScreen } from '../screens/personal/DietDetailScreen';
 import { UpgradePlanScreen } from '../screens/personal/UpgradePlanScreen';
+import { PersonalProfileScreen } from '../screens/personal/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<PersonalStackParams>();
 
 const PersonalTabs: React.FC = () => {
   const { bottom } = useSafeAreaInsets();
-  // iPhone X+: bottom ≈ 34px | Android/iPhone antigo: bottom = 0
+  const { user } = useAuth();
   const tabBarHeight = 56 + bottom;
+  const initial = (user?.name ?? '?')[0].toUpperCase();
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color }) => {
-          const icons: Record<string, any> = {
-            Dashboard: focused ? 'home' : 'home-outline',
-            Time: focused ? 'people' : 'people-outline',
+          if (route.name === 'Perfil') {
+            return (
+              <View style={[
+                tabStyles.avatarWrap,
+                focused ? tabStyles.avatarWrapActive : tabStyles.avatarWrapInactive,
+              ]}>
+                <Text style={[
+                  tabStyles.avatarText,
+                  { color: focused ? colors.white : colors.primary },
+                ]}>
+                  {initial}
+                </Text>
+              </View>
+            );
+          }
+          const icons: Record<string, { focused: string; unfocused: string }> = {
+            Dashboard: { focused: 'home', unfocused: 'home-outline' },
+            Time: { focused: 'people', unfocused: 'people-outline' },
           };
+          const icon = icons[route.name];
           return (
             <View style={[tabStyles.iconWrap, focused && tabStyles.iconWrapActive]}>
-              <Ionicons name={icons[route.name]} size={22} color={color} />
+              <Ionicons
+                name={(focused ? icon?.focused : icon?.unfocused) as any}
+                size={22}
+                color={color}
+              />
             </View>
           );
         },
@@ -58,6 +81,7 @@ const PersonalTabs: React.FC = () => {
     >
       <Tab.Screen name="Dashboard" component={PersonalDashboardScreen} options={{ title: 'Início', headerShown: false }} />
       <Tab.Screen name="Time" component={TeamScreen} options={{ title: 'Meu Time' }} />
+      <Tab.Screen name="Perfil" component={PersonalProfileScreen} options={{ title: 'Perfil' }} />
     </Tab.Navigator>
   );
 };
@@ -113,5 +137,22 @@ const tabStyles = StyleSheet.create({
   },
   iconWrapActive: {
     backgroundColor: colors.primaryLight,
+  },
+  avatarWrap: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarWrapActive: {
+    backgroundColor: colors.primary,
+  },
+  avatarWrapInactive: {
+    backgroundColor: colors.primaryLight,
+  },
+  avatarText: {
+    fontSize: 13,
+    fontWeight: '800',
   },
 });

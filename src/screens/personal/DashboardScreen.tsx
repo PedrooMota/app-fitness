@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
-  TouchableOpacity,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,7 +18,7 @@ import * as dietApi from '../../api/diet';
 import { User, Workout, DietPlan } from '../../types';
 
 export const PersonalDashboardScreen: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const insets = useSafeAreaInsets();
   const [members, setMembers] = useState<User[]>([]);
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -63,9 +62,6 @@ export const PersonalDashboardScreen: React.FC = () => {
             <Text style={styles.roleText}>Personal Trainer</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={signOut} style={styles.logoutBtn}>
-          <Ionicons name="log-out-outline" size={20} color={colors.white} />
-        </TouchableOpacity>
       </View>
 
       {/* Stats */}
@@ -146,15 +142,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   roleText: { fontSize: 12, color: colors.white, fontWeight: '600' },
-  logoutBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
   statsRow: {
     flexDirection: 'row',
     gap: 10,
